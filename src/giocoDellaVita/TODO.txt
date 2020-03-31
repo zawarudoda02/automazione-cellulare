@@ -1,0 +1,6 @@
+-aggiungere commenti
+-aggiungere modo di salvare i file e leggerli
+-aggiungere modo di modificare la velocità 
+-poter con un click inserire in un punto una forma come il cannone, il glider o l'acorn(in modo simile ai 
+pennelli di photoshop)
+-possibile esportazione in png o gif

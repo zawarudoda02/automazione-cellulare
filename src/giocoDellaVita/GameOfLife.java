@@ -25,7 +25,6 @@ public class GameOfLife extends Application {
 	int cellSize = 10;
 	int topLeftX = (fullWidth/2)-(seenWidth/2),topLeftY = (fullHeight/2) -(seenHeight/2); 
 	int incremento = 10;
-	Label lVelocità = new Label();
 	Rectangle rectArr[][] = new Rectangle[seenWidth][seenHeight];
 	boolean colorArr[][] = new boolean[fullWidth][fullHeight];
 	boolean tempColorArr[][] = new boolean[fullWidth][fullHeight];
