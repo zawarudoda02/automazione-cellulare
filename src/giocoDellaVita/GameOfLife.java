@@ -23,7 +23,7 @@ public class GameOfLife extends Application {
 	int fullWidth = 1000, fullHeight = 1000; // in celle
 	int seenWidth = 100, seenHeight = 50;
 	int cellSize = 10;
-	int topLeftX = (fullWidth/2)-(seenWidth/2),topLeftY = (fullHeight/2) -(seenHeight/2); 
+	int topLeftX = (fullWidth / 2) - (seenWidth / 2), topLeftY = (fullHeight / 2) - (seenHeight / 2);
 	int incremento = 10;
 	Rectangle rectArr[][] = new Rectangle[seenWidth][seenHeight];
 	boolean colorArr[][] = new boolean[fullWidth][fullHeight];
@@ -44,15 +44,15 @@ public class GameOfLife extends Application {
 		ui.add(griglia, 0, 0, 10, 1);
 		for (int x = 0; x < fullWidth; x++) {
 			for (int y = 0; y < fullHeight; y++) {
-				
+
 				colorArr[x][y] = false;
 				tempColorArr[x][y] = false;
-				
+
 			}
 
 		}
-		for(int x = 0; x < seenWidth;x++) {
-			for(int y = 0;y < seenHeight;y++) {
+		for (int x = 0; x < seenWidth; x++) {
+			for (int y = 0; y < seenHeight; y++) {
 				rectArr[x][y] = new Rectangle();
 				rectArr[x][y].setWidth(cellSize);
 				rectArr[x][y].setHeight(cellSize);
@@ -72,38 +72,37 @@ public class GameOfLife extends Application {
 		primaryStage.show();
 		scene.setOnKeyPressed(e -> pigiato(e));
 		timeline.setCycleCount(timeline.INDEFINITE);
-		
 
 	}
 
 	private void pigiato(KeyEvent e) {
-		if(e.getCode() == KeyCode.W) {
-			if(topLeftY >= incremento) {
-				topLeftY -=incremento;
+		if (e.getCode() == KeyCode.W) {
+			if (topLeftY >= incremento) {
+				topLeftY -= incremento;
 			}
 		}
-		if(e.getCode()== KeyCode.A) {
-			if(topLeftX >= incremento) {
+		if (e.getCode() == KeyCode.A) {
+			if (topLeftX >= incremento) {
 				topLeftX -= incremento;
 			}
 		}
-		if(e.getCode()== KeyCode.D) {
-			if(topLeftX+seenWidth <= fullWidth-incremento) {
-				topLeftX+=incremento;
+		if (e.getCode() == KeyCode.D) {
+			if (topLeftX + seenWidth <= fullWidth - incremento) {
+				topLeftX += incremento;
 			}
 		}
-		if(e.getCode()== KeyCode.S) {
-			if(topLeftY+seenHeight <= fullHeight-incremento) {
-				topLeftY+=incremento;
+		if (e.getCode() == KeyCode.S) {
+			if (topLeftY + seenHeight <= fullHeight - incremento) {
+				topLeftY += incremento;
 			}
 		}
-		System.out.println(topLeftX+ " "+ topLeftY);
+		System.out.println(topLeftX + " " + topLeftY);
 	}
 
 	private void pulisci() {
 		for (int x = 0; x < fullWidth; x++) {
 			for (int y = 0; y < fullHeight; y++) {
-				
+
 				colorArr[x][y] = false;
 				tempColorArr[x][y] = false;
 			}
@@ -152,7 +151,7 @@ public class GameOfLife extends Application {
 
 				if (colorArr[x][y]) { // se cella viva
 					if (neighborCount < 2) { // morte per isolamento :(
-						tempColorArr[x][y] = false; 
+						tempColorArr[x][y] = false;
 
 					} else if (neighborCount > 3) {// morte per sovrappopolazione
 						tempColorArr[x][y] = false;
@@ -172,31 +171,28 @@ public class GameOfLife extends Application {
 				tempColorArr[x][y] = false;
 			}
 		}
-		
 
-		
-		for(int x = topLeftX; x < topLeftX+seenWidth;x++) {
-			for(int y = topLeftY;y < topLeftY+ seenHeight;y++) {
+		for (int x = topLeftX; x < topLeftX + seenWidth; x++) {
+			for (int y = topLeftY; y < topLeftY + seenHeight; y++) {
 				if (colorArr[x][y]) {
-					rectArr[x-topLeftX][y-topLeftY].setFill(Color.gray(0));
+					rectArr[x - topLeftX][y - topLeftY].setFill(Color.gray(0));
 				} else {
-					rectArr[x-topLeftX][y-topLeftY].setFill(Color.gray(0.9));
+					rectArr[x - topLeftX][y - topLeftY].setFill(Color.gray(0.9));
 				}
 			}
 		}
-		
 
 	}
 
 	private void cambioStato(MouseEvent e) {
 
-		int x = ((int) ((int) e.getSceneX() / (cellSize+1)))+topLeftX;
-		int y = ((int) ((int) e.getSceneY() / (cellSize+1)))+topLeftY;
+		int x = ((int) ((int) e.getSceneX() / (cellSize + 1))) + topLeftX;
+		int y = ((int) ((int) e.getSceneY() / (cellSize + 1))) + topLeftY;
 		if (colorArr[x][y]) {
-			rectArr[x-topLeftX][y-topLeftY].setFill(Color.gray(0.9));
+			rectArr[x - topLeftX][y - topLeftY].setFill(Color.gray(0.9));
 			colorArr[x][y] = !colorArr[x][y];
 		} else {
-			rectArr[x-topLeftX][y-topLeftY].setFill(Color.gray(0));
+			rectArr[x - topLeftX][y - topLeftY].setFill(Color.gray(0));
 			colorArr[x][y] = !colorArr[x][y];
 		}
 	}
