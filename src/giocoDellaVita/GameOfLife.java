@@ -1,5 +1,10 @@
 package giocoDellaVita;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -16,27 +21,31 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class GameOfLife extends Application {
-	int fullWidth = 1000, fullHeight = 1000; // in celle
-	int seenWidth = 100, seenHeight = 50;
-	int cellSize = 10;
+	int fullWidth = 50, fullHeight = 30; // in celle
+	int seenWidth = 50, seenHeight = 30;
+	int cellSize = 8;
 	int topLeftX = (fullWidth / 2) - (seenWidth / 2), topLeftY = (fullHeight / 2) - (seenHeight / 2);
 	int incremento = 10;
 	Rectangle rectArr[][] = new Rectangle[seenWidth][seenHeight];
 	boolean colorArr[][] = new boolean[fullWidth][fullHeight];
 	boolean tempColorArr[][] = new boolean[fullWidth][fullHeight];
-	Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.05), // ogni quanto va chiamata la funzione
+	Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.02), // ogni quanto va chiamata la funzione
 			x -> aggiornaTimer()));
 	boolean state = false;
+	Stage primaryStage;
 
 	@Override
 	public void start(Stage primaryStage) {
 
 		Button bInizia = new Button("INIZIA/FERMA");
 		Button bPulisci = new Button("PULISCI");
+		Button bSalva = new Button("Salva");
+		Button bCarica = new Button("Carica");
 		GridPane ui = new GridPane();
 		GridPane griglia = new GridPane();
 		griglia.setVgap(1);
@@ -62,9 +71,19 @@ public class GameOfLife extends Application {
 		}
 		ui.add(bInizia, 0, 1);
 		ui.add(bPulisci, 1, 1);
+		ui.add(bSalva, 2, 1);
+		ui.add(bCarica, 3, 1);
 
 		bInizia.setOnAction(e -> inizia());
 		bPulisci.setOnAction(e -> pulisci());
+		bSalva.setOnAction(e -> {
+			try {
+				salva();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
 		Scene scene = new Scene(ui);
 		scene.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> cambioStato(e));
 		primaryStage.setTitle("Game of Life");
@@ -73,6 +92,38 @@ public class GameOfLife extends Application {
 		scene.setOnKeyPressed(e -> pigiato(e));
 		timeline.setCycleCount(timeline.INDEFINITE);
 
+	}
+
+	private void salva() throws IOException {
+		timeline.stop();
+
+		char[][] content = new char[fullHeight][fullWidth];
+		for (int col = 0; col < fullWidth; col++) {
+			for (int row = 0; row < fullHeight; row++) {
+				System.out.println("col:" + col + "  row:" + row);
+				if (colorArr[col][row]) {
+
+					content[row][col] = '1';
+				} else {
+					content[row][col] = '0';
+				}
+
+			}
+		}
+
+		for (int row = 0; row < fullHeight; row++) {
+			System.out.println(content[row]);
+		}
+
+		FileChooser fileChooser = new FileChooser();
+		File file = fileChooser.showSaveDialog(primaryStage);
+		FileWriter scrivi = new FileWriter(file);
+		scrivi.write("" + fullWidth + " " + fullHeight + "\n");
+		for (int row = 0; row < fullHeight; row++) {
+			scrivi.write(content[row]);
+			scrivi.write("\n");
+		}
+		scrivi.close();
 	}
 
 	private void pigiato(KeyEvent e) {
@@ -139,7 +190,7 @@ public class GameOfLife extends Application {
 				if (colorArr[(x + 1 + fullWidth) % fullWidth][(y + 1 + fullHeight) % fullHeight]) {
 					neighborCount++;
 				}
-				if (colorArr[x % fullWidth][Math.floorMod((y + 1), fullHeight)]) {
+				if (colorArr[x % fullWidth][(y + 1 + fullHeight) % fullHeight]) {
 					neighborCount++;
 				}
 				if (colorArr[(x - 1 + fullWidth) % fullWidth][(y + 1 + fullHeight) % fullHeight]) {
