@@ -10,9 +10,12 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -25,15 +28,70 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+class Config extends Stage {
+	int minSize = 50;
+	int maxSize = 10000;
+	int maxSeenSize = 100;
+	int sizeX = -1;
+	int sizeY = -1;
+	TextField tSizeX = new TextField();
+	TextField tSizeY = new TextField();
+
+	public Config() {
+		Label lConfig = new Label("Finestra Configurazione");
+		Label lSizeX = new Label("Larghezza");
+		Label lSizeY = new Label("Altezza");
+		Label lSizeXInfo = new Label("50-10000");
+		Label lSizeYInfo = new Label("50-10000");
+		Button bImposta = new Button("Imposta");
+		Button bAnnulla = new Button("Annulla");
+
+		GridPane griglia = new GridPane();
+		griglia.add(lConfig, 0, 0);
+		griglia.add(lSizeX, 0, 1);
+		griglia.add(lSizeY, 0, 2);
+		griglia.add(tSizeX, 1, 1);
+		griglia.add(tSizeY, 1, 2);
+		griglia.add(lSizeXInfo, 2, 1);
+		griglia.add(lSizeYInfo, 2, 2);
+		griglia.add(bImposta, 1, 3);
+		griglia.add(bAnnulla, 2, 3);
+
+		Scene scene = new Scene(griglia);
+		setTitle("Finestra configurazione");
+		setScene(scene);
+
+		bImposta.setOnAction(e -> imposta());
+		bAnnulla.setOnAction(e -> annulla());
+	}
+
+	private void annulla() {
+		close();
+	}
+
+	private void imposta() {
+		sizeX = Integer.parseInt(tSizeX.getText());
+		sizeY = Integer.parseInt(tSizeY.getText());
+		if (sizeX < minSize || sizeX > maxSize || sizeY < minSize || sizeY > maxSize) {
+			sizeX = -1;
+			sizeY = -1;
+			Alert allerta = new Alert(AlertType.ERROR, "grandezze non nel limite");
+		} else {
+			close();
+		}
+
+	}
+}
+
 public class GameOfLife extends Application {
 	int fullWidth = 50, fullHeight = 30; // in celle
 	int seenWidth = 50, seenHeight = 30;
 	int cellSize = 8;
 	int topLeftX = (fullWidth / 2) - (seenWidth / 2), topLeftY = (fullHeight / 2) - (seenHeight / 2);
 	int incremento = 10;
-	Rectangle rectArr[][] = new Rectangle[seenWidth][seenHeight];
-	boolean colorArr[][] = new boolean[fullWidth][fullHeight];
-	boolean tempColorArr[][] = new boolean[fullWidth][fullHeight];
+	Rectangle rectArr[][]; 
+	boolean colorArr[][]; 
+	boolean tempColorArr[][]; 
 	Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.02), // ogni quanto va chiamata la funzione
 			x -> aggiornaTimer()));
 	boolean state = false;
@@ -41,11 +99,21 @@ public class GameOfLife extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-
+		Config finestraConfig = new Config();
+		finestraConfig.showAndWait();
+		System.out.println(finestraConfig.sizeX + " " + finestraConfig.sizeY);
+		if(!(finestraConfig.sizeX == -1 || finestraConfig.sizeY == -1)) {
+			fullWidth = finestraConfig.sizeX;
+			fullHeight = finestraConfig.sizeY;
+		}
+		rectArr  = new Rectangle[seenWidth][seenHeight];
+		colorArr = new boolean[fullWidth][fullHeight];
+		tempColorArr = new boolean[fullWidth][fullHeight];	
 		Button bInizia = new Button("INIZIA/FERMA");
 		Button bPulisci = new Button("PULISCI");
 		Button bSalva = new Button("Salva");
 		Button bCarica = new Button("Carica");
+		Button bConfig = new Button("Config");
 		GridPane ui = new GridPane();
 		GridPane griglia = new GridPane();
 		griglia.setVgap(1);
@@ -73,6 +141,7 @@ public class GameOfLife extends Application {
 		ui.add(bPulisci, 1, 1);
 		ui.add(bSalva, 2, 1);
 		ui.add(bCarica, 3, 1);
+		ui.add(bConfig, 4, 1);
 
 		bInizia.setOnAction(e -> inizia());
 		bPulisci.setOnAction(e -> pulisci());
@@ -84,6 +153,8 @@ public class GameOfLife extends Application {
 				e1.printStackTrace();
 			}
 		});
+		bCarica.setOnAction(e -> carica());
+		bConfig.setOnAction(e -> config());
 		Scene scene = new Scene(ui);
 		scene.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> cambioStato(e));
 		primaryStage.setTitle("Game of Life");
@@ -92,6 +163,16 @@ public class GameOfLife extends Application {
 		scene.setOnKeyPressed(e -> pigiato(e));
 		timeline.setCycleCount(timeline.INDEFINITE);
 
+	}
+
+	private void config() {
+		timeline.stop();
+		
+		
+	}
+
+	private void carica() {
+		timeline.stop();
 	}
 
 	private void salva() throws IOException {
