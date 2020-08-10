@@ -113,7 +113,7 @@ public class GameOfLife extends Application {
 		Button bPulisci = new Button("PULISCI");
 		Button bSalva = new Button("Salva");
 		Button bCarica = new Button("Carica");
-		Button bConfig = new Button("Config");
+		
 		GridPane ui = new GridPane();
 		GridPane griglia = new GridPane();
 		griglia.setVgap(1);
@@ -141,7 +141,7 @@ public class GameOfLife extends Application {
 		ui.add(bPulisci, 1, 1);
 		ui.add(bSalva, 2, 1);
 		ui.add(bCarica, 3, 1);
-		ui.add(bConfig, 4, 1);
+		
 
 		bInizia.setOnAction(e -> inizia());
 		bPulisci.setOnAction(e -> pulisci());
@@ -154,7 +154,7 @@ public class GameOfLife extends Application {
 			}
 		});
 		bCarica.setOnAction(e -> carica());
-		bConfig.setOnAction(e -> config());
+		
 		Scene scene = new Scene(ui);
 		scene.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> cambioStato(e));
 		primaryStage.setTitle("Game of Life");
